@@ -4,13 +4,10 @@ const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const session = require("express-session")
 const flash = require("connect-flash")
-const Review = require("./models/review") 
-const {campgroundSchema, reviewSchema} =require("./schemas.js")
-const catchAsync = require("./utils/catchAsync")
+
 const ExpressError = require("./utils/ExpressError")
 const methodOverride = require("method-override")
-const Campground = require("./models/campground")
-const {validateReview, isLoggedIn, isReviewAuthor} =require("./middleware")
+
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local")
@@ -81,26 +78,7 @@ app.get('/', (req,res)=>{
 
 
 
-app.post("/campground/:id/reviews", isLoggedIn,catchAsync(async(req,res)=>{
-    const {id} = req.params;
-    const campground = await Campground.findById(id) 
-    const review = new Review(req.body.review);
-    review.author = req.user._id;
-    campground.reviews.push(review);
-    await review.save();
-    await campground.save();
-    req.flash("success", "Created New Review")
-    res.redirect(`/campgrounds/${campground._id}`);
-}))
-
-app.delete('/campgrounds/:id/reviews/:reviewId', isLoggedIn, isReviewAuthor, catchAsync(async(req,res)=>{
-    const {id, reviewId} = req.params
-    console.log("button pressed")
-    await Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})
-    await Review.findByIdAndDelete(reviewId);
-    req.flash("success", "Successfully deleted Review")
-    res.redirect(`/campgrounds/${id}`)
-}))
+ 
 
 app.all("*", (req,res,next)=>{
     next(new ExpressError("Page not Found", 404))

@@ -9,7 +9,15 @@
           <a class="nav-link text-white" aria-current="page" href="/">Home</a>
           <a class="nav-link text-white"  href="/campgrounds">Campgrounds</a>
           <a class="nav-link text-white" href="/campgrounds/new">New Campground </a>
-          
+        </div>
+
+        <div class="navbar-nav ms-auto">
+          <% if(!currentUser) {%>
+          <a class="nav-link text-white" href="/login">Login</a>
+          <a class="nav-link text-white" href="/register">Sign Up</a>
+          <% } else{ %>
+          <a class="nav-link text-white" href="/logout">Logout</a>
+          <% } %>
         </div>
       </div>
     </div>

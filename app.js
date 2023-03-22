@@ -22,11 +22,11 @@ const userRoutes = require("./routes/user")
 const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 
-const MongoDBStore = require("connect-mongo");
+const MongoStore = require("connect-mongo");
 
 
 
-const dbUrl = 'mongodb://127.0.0.1:27017/yelp-camp'
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/yelp-camp'
 
 //mongoose.connect(dbUrl)
 mongoose.connect(dbUrl);
@@ -49,9 +49,11 @@ app.use(express.urlencoded({extended: true}))
 app.use(methodOverride("_method"))
 app.use(express.static(path.join(__dirname, "public")))
 
-const store = new MongoDBStore({
-    url: dbUrl,
-    secret: "thisIsABadSecret",
+const secret = process.env.SECRET || "thisIsABadSecret"
+
+const store =  MongoStore.create({
+    mongoUrl: dbUrl,
+    secret: secret,
     touchAfter: 24 * 60 * 60
 });
 
@@ -60,7 +62,7 @@ const store = new MongoDBStore({
 const sessionConfig = {
     store,
     name: "session",
-    secret: "thisIsABadSecret",
+    secret: secret,
     resave:false,
     saveUninitialized: true,
     cookie:{
@@ -71,6 +73,8 @@ const sessionConfig = {
     }
 }
 app.use(session(sessionConfig))
+
+
 app.use(flash());
 // app.use(helmet());
 
